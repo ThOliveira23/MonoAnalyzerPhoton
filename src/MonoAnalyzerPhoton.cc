@@ -34,9 +34,13 @@ using namespace std;
 void MonoCuts::doAnalysis(vector<MonoCandidate> &cand, vector<Photon> & pho, unsigned nCandidates,unsigned nPhoton, bool TRG, unsigned ev,bool matching_option,string year)
 {
 	Clear();
+        //cout << "nCandidates:" << nCandidates << endl; 
+
+
 
 	for(unsigned c=0;c<nCandidates;c++){
 
+		//cout << "c: " << c << endl;
 		MonoCandidate &cands = cand[c];
 		bool QualCut = evalQuality(cands);
 		bool ECut = evalE(cands);
@@ -390,7 +394,11 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 	// remember to change the path befor you run
 	if(sys_option == 0){
 		sys = "";
+		cout << "Processing for MC..." << endl;	
 		tree->Add(("/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-NTUPLE-v2/merges/"+year+"-"+mass+".root").c_str());
+		cout << "/eos/cms/store/user/srimanob/monopole/13TeV/Legacy-NTUPLE-v2/merges/"+year+"-"+mass+".root" <<  endl;
+	 	//tree->Add(("/afs/cern.ch/user/t/tmenezes/work/private/CMSSW_10_6_23/src/Monopoles/MonoAnalysis/bin/output/MonoPhotonAnalysis_"+year+"-"+mass+"_monoNtupleAnalyzer.root").c_str());
+		//tree->Add(("/eos/cms/store/group/offcomp_upgrade-sw/srimanob/monopole/13TeV/Legacy-RECO-v2/"+year+"-"+mass+"/RECO_2018_1000_2.root").c_str());
 	}
 	else if(sys_option == 1){
 		sys = "DeltaRayOff";
@@ -412,8 +420,13 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 
 	Bool_t passHLT_Photon200;
 	Bool_t passHLT_Photon175;
-	Bool_t passHLT_DoublePhoton70;
-	Bool_t passHLT_DoublePhoton60;
+        Bool_t passHLT_DoublePhoton70;
+        Bool_t passHLT_DoublePhoton60;
+        // New Triggers
+        Bool_t passHLT_PFMET300;
+        Bool_t passHLT_MET200;
+        Bool_t passHLT_PFMET250_HBHECleaned;
+        Bool_t passHLT_CaloMET350_HBHECleaned;
 	unsigned nCandidates;
 	unsigned event;
 	unsigned NPV;
@@ -451,7 +464,12 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 	tree->SetBranchAddress("passHLT_Photon175" , &passHLT_Photon175);
 	tree->SetBranchAddress("passHLT_DoublePhoton70",&passHLT_DoublePhoton70);
 	tree->SetBranchAddress("passHLT_DoublePhoton60",&passHLT_DoublePhoton60);
-	tree->SetBranchAddress("cand_N",&nCandidates);
+	// New Triggers
+	tree->SetBranchAddress("passHLT_PFMET300",&passHLT_PFMET300);
+        tree->SetBranchAddress("passHLT_MET200",&passHLT_MET200);
+        tree->SetBranchAddress("passHLT_PFMET250_HBHECleaned",&passHLT_PFMET250_HBHECleaned);
+        tree->SetBranchAddress("passHLT_CaloMET350_HBHECleaned",&passHLT_CaloMET350_HBHECleaned);
+        tree->SetBranchAddress("cand_N",&nCandidates);
 	tree->SetBranchAddress("cand_SubHits",&subHits);
 	tree->SetBranchAddress("cand_SatSubHits",&subSatHits);
 	tree->SetBranchAddress("cand_dEdXSig",&dEdXSig);
@@ -485,6 +503,12 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 
 	MonoCuts noTrgAnalysis("NOTRG",oFile);
 	MonoCuts TrgAnalysis("HLT_Photon200",oFile);
+        MonoCuts HLT175_TrgAnalysis("HLT_Photon175",oFile);
+        //define the MonoCuts object for the new triggers
+        MonoCuts PFMET300_TrgAnalysis("HLT_PFMET300",oFile);
+        MonoCuts MET200_TrgAnalysis("HLT_MET200",oFile);
+        MonoCuts PFMET_TrgAnalysis("HLT_PFMET250_HBHECleaned",oFile);
+        MonoCuts CaloMET_TrgAnalysis("HLT_CaloMET350_HBHECleaned",oFile);
 
 	vector<MonoCandidate> cand(10);	
 	vector<Photon> photon(0);
@@ -535,22 +559,86 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 						);
 			}
 		}
-		noTrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,true,ev,matching_option,year);		
-		if( year == "2016" || year == "2016APV")      TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon175,ev,matching_option,year);
-		else      TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon200,ev,matching_option,year);
-	}//for every event loop
 
-	noTrgAnalysis.WritePlots(oFile);
-	noTrgAnalysis.SignalEff("NOTRG",NEvents);
-	noTrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"NoTrg");
-	TrgAnalysis.WritePlots(oFile);
-	if(year == "2016" || year == "2016APV"){
+                // Perform the Analysis considering the input year
+		noTrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,true,ev,matching_option,year);
+                HLT175_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon175,ev,matching_option,year);                // 2016        
+                TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon200,ev,matching_option,year);                       // 2017, 2018
+                PFMET300_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_PFMET300,ev,matching_option,year);               // 2016 (empty)
+                MET200_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_MET200,ev,matching_option,year);                              // 2016 (empty) 
+                PFMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_PFMET250_HBHECleaned,ev,matching_option,year);      // 2017,2018
+                CaloMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_CaloMET350_HBHECleaned,ev,matching_option,year);  // 2017,2018
+		
+		//if( year == "2016" || year == "2016APV")      TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon175,ev,matching_option,year);
+		//else      TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon200,ev,matching_option,year);
+                // Perform the abalysis for the new triggers
+                //if(year == "2017" || year == "2018")      PFMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_PFMET250_HBHECleaned,ev,matching_option,year);
+                //else PFMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_Photon200,ev,matching_option,year); 	
+                //if(year == "2017" || year == "2018")      CaloMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_CaloMET350_HBHECleaned,ev,matching_option,year);
+
+             //  if(year == "2017" || year == "2018") {
+                 
+            //     PFMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_PFMET250_HBHECleaned,ev,matching_option,year);
+            //     CaloMET_TrgAnalysis.doAnalysis(cand,photon,nCandidates,nPhoton,passHLT_CaloMET350_HBHECleaned,ev,matching_option,year);
+            //  }
+
+
+
+                }//for every event loop
+
+        // Write Plots 
+        noTrgAnalysis.WritePlots(oFile);
+        HLT175_TrgAnalysis.WritePlots(oFile);
+        TrgAnalysis.WritePlots(oFile);
+        PFMET300_TrgAnalysis.WritePlots(oFile);
+        MET200_TrgAnalysis.WritePlots(oFile);
+        PFMET_TrgAnalysis.WritePlots(oFile);
+        CaloMET_TrgAnalysis.WritePlots(oFile);
+
+        // Extract the Signal Efficiency
+        noTrgAnalysis.SignalEff("NOTRG",NEvents);
+        noTrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"NoTrg");
+
+        /*if(year == "2016" || year == "2016APV"){
 		TrgAnalysis.SignalEff("HLT_Photon175",NEvents);
 		TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon175");
 	}
 	else{
 		TrgAnalysis.SignalEff("HLT_Photon200",NEvents);
 		TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon200");
-	}
+        }*/	
+
+
+         HLT175_TrgAnalysis.SignalEff("HLT_Photon175",NEvents);
+         HLT175_TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_175_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon175");
+
+         TrgAnalysis.SignalEff("HLT_Photon200",NEvents);
+         TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_200_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon200");
+
+
+         PFMET300_TrgAnalysis.SignalEff("HLT_PFMET300",NEvents);
+         PFMET300_TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_PFMET300_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"PFMET300");
+
+         MET200_TrgAnalysis.SignalEff("HLT_MET200",NEvents);
+         MET200_TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_MET200_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"MET200");
+
+         PFMET_TrgAnalysis.SignalEff("HLT_PFMET250_HBHECleaned",NEvents);
+         CaloMET_TrgAnalysis.SignalEff("HLT_CaloMET350_HBHECleaned",NEvents);
+        
+         PFMET_TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_PFMET250_HBHECleaned_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"HLT_PFMET250_HBHECleaned");
+         CaloMET_TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_CaloMET350_HBHECleaned_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"HLT_CaloMET350_HBHECleaned"); 
+   
+
+
+
+        /*if(year == "2017" || year == "2018"){
+                PFMET_TrgAnalysis.SignalEff("HLT_PFMET250_HBHECleaned",NEvents);
+                CaloMET_TrgAnalysis.SignalEff("HLT_CaloMET350_HBHECleaned",NEvents);
+	
+                PFMET_TrgAnalysis.SaveAs_csv(("output/csv_file/Signaleff_"+year+"_"+mass+"_HLT_PFMET250_HBHECleaned_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"HLT_PFMET250_HBHECleaned");
+                CaloMET_TrgAnalysis.SaveAs_csv(("output/csv_file/Signaleff_"+year+"_"+mass+"_HLT_CaloMET350_HBHECleaned_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"HLT_CaloMET350_HBHECleaned"); 
+       }*/
+
+        
 	oFile->Close();	
 }
