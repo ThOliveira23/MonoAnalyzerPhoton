@@ -408,7 +408,7 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 		tree->Add(("/wk_cms2/shihlin0314/CMSSW_8_0_29/src/Systematic/DedxCrossTalk/"+year+"/"+mass+"/*.root").c_str());
 	}
 
-	TFile *oFile = new TFile(("output/MonoPhotonAnalysis_"+year+"_"+mass+"_"+sys+"_"+matching+".root").c_str(),"recreate");
+	TFile *oFile = new TFile(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/MonoPhotonAnalysis_"+year+"_"+mass+"_"+sys+"_"+matching+".root").c_str(),"recreate");
 
 	Bool_t passHLT_Photon200;
 	Bool_t passHLT_Photon175;
@@ -542,15 +542,15 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 
 	noTrgAnalysis.WritePlots(oFile);
 	noTrgAnalysis.SignalEff("NOTRG",NEvents);
-	noTrgAnalysis.SaveAs_csv(("output/csv_file/Signaleff_"+year+"_"+mass+"_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"NoTrg");
+	noTrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"NoTrg");
 	TrgAnalysis.WritePlots(oFile);
 	if(year == "2016" || year == "2016APV"){
 		TrgAnalysis.SignalEff("HLT_Photon175",NEvents);
-		TrgAnalysis.SaveAs_csv(("output/csv_file/Signaleff_"+year+"_"+mass+"_HLT_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon175");
+		TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon175");
 	}
 	else{
 		TrgAnalysis.SignalEff("HLT_Photon200",NEvents);
-		TrgAnalysis.SaveAs_csv(("output/csv_file/Signaleff_"+year+"_"+mass+"_HLT_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon200");
+		TrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_HLT_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"Photon200");
 	}
 	oFile->Close();	
 }
