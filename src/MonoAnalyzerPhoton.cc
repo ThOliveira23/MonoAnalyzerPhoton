@@ -420,13 +420,13 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 
 	Bool_t passHLT_Photon200;
 	Bool_t passHLT_Photon175;
-        Bool_t passHLT_DoublePhoton70;
-        Bool_t passHLT_DoublePhoton60;
-        // New Triggers
-        Bool_t passHLT_PFMET300;
-        Bool_t passHLT_MET200;
-        Bool_t passHLT_PFMET250_HBHECleaned;
-        Bool_t passHLT_CaloMET350_HBHECleaned;
+    Bool_t passHLT_DoublePhoton70;
+    Bool_t passHLT_DoublePhoton60;
+    // New Triggers
+    Bool_t passHLT_PFMET300;
+    Bool_t passHLT_MET200;
+    Bool_t passHLT_PFMET250_HBHECleaned;
+    Bool_t passHLT_CaloMET350_HBHECleaned;
 	unsigned nCandidates;
 	unsigned event;
 	unsigned NPV;
@@ -466,10 +466,10 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 	tree->SetBranchAddress("passHLT_DoublePhoton60",&passHLT_DoublePhoton60);
 	// New Triggers
 	tree->SetBranchAddress("passHLT_PFMET300",&passHLT_PFMET300);
-        tree->SetBranchAddress("passHLT_MET200",&passHLT_MET200);
-        tree->SetBranchAddress("passHLT_PFMET250_HBHECleaned",&passHLT_PFMET250_HBHECleaned);
-        tree->SetBranchAddress("passHLT_CaloMET350_HBHECleaned",&passHLT_CaloMET350_HBHECleaned);
-        tree->SetBranchAddress("cand_N",&nCandidates);
+    tree->SetBranchAddress("passHLT_MET200",&passHLT_MET200);
+    tree->SetBranchAddress("passHLT_PFMET250_HBHECleaned",&passHLT_PFMET250_HBHECleaned);
+    tree->SetBranchAddress("passHLT_CaloMET350_HBHECleaned",&passHLT_CaloMET350_HBHECleaned);
+    tree->SetBranchAddress("cand_N",&nCandidates);
 	tree->SetBranchAddress("cand_SubHits",&subHits);
 	tree->SetBranchAddress("cand_SatSubHits",&subSatHits);
 	tree->SetBranchAddress("cand_dEdXSig",&dEdXSig);

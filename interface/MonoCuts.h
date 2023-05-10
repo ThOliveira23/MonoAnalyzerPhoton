@@ -14,7 +14,8 @@ public:
 	NoCutPlot.resize(1U);
 	PlotSet &x = NoCutPlot[0];
         x.CreatPlot(FracSatVNstrips,new TH2D("FracSatVNstrips","",100,0,1000,100,0,1));
-        x.CreatPlot(DedXSig,new TH1D("DedXSig","",100,0,30));
+        //x.CreatPlot(DedXSig,new TH1D("DedXSig","",100,0,30));
+        x.CreatPlot(DedXSig,new TH1D("dEdXSig","",100,0,30));
         x.CreatPlot(XYPar0,new TH1D("XYPar0","",50,-1,1));
         x.CreatPlot(XYPar1,new TH1D("XYPar1","",100,-10,10));
         x.CreatPlot(XYPar2,new TH1D("XYPar2","",100,-20000,20000));
@@ -37,22 +38,25 @@ public:
  	cutName_[0] = "Quality_";
  	cutName_[1] = "Energy_";
 	cutName_[2] = "F51_";
-	cutName_[3] = "dEdxSig_";
+	cutName_[3] = "dEdXSig_";
 	cutName_[4] = "HLT_";
 	
         n_1Plot.resize(nCut);
 
 	for( int c = 0; c <nCut ;c++){
 
+           // The N - 1 Plots: 
+
 	   string cutn1name = "N1_"+ cutName_[c];
 	   PlotSet &z = n_1Plot[c];
 	   z.CreatPlot(FracSatVNstrips,new TH2D((cutn1name+"FracSatVNstrips").c_str(),"",100,0,1000,100,0,1));
-	   z.CreatPlot(DedXSig,new TH1D((cutn1name+"DedXSig").c_str(),"",100,0,30));
-//           z.CreatPlot(XYPar0,new TH1D((cutn1name+"XYPar0").c_str(),"",100,-1,1));
-//           z.CreatPlot(XYPar1,new TH1D((cutn1name+"XYPar1").c_str(),"",100,-10,10));
-//           z.CreatPlot(XYPar2,new TH1D((cutn1name+"XYPar2").c_str(),"",100,-20000,20000));
-//           z.CreatPlot(RZPar0,new TH1D((cutn1name+"RZPar0").c_str(),"",100,-20,20));
-//           z.CreatPlot(RZPar1,new TH1D((cutn1name+"RZPar1").c_str(),"",100,-15,15));
+	   //z.CreatPlot(DedXSig,new TH1D((cutn1name+"DedXSig").c_str(),"",100,0,30));
+           z.CreatPlot(DedXSig,new TH1D((cutn1name+"dEdXSig").c_str(),"",100,0,30));
+           z.CreatPlot(XYPar0,new TH1D((cutn1name+"XYPar0").c_str(),"",100,-1,1));
+           z.CreatPlot(XYPar1,new TH1D((cutn1name+"XYPar1").c_str(),"",100,-10,10));
+           z.CreatPlot(XYPar2,new TH1D((cutn1name+"XYPar2").c_str(),"",100,-20000,20000));
+           z.CreatPlot(RZPar0,new TH1D((cutn1name+"RZPar0").c_str(),"",100,-20,20));
+           z.CreatPlot(RZPar1,new TH1D((cutn1name+"RZPar1").c_str(),"",100,-15,15));
 	   z.CreatPlot(RZcurv,new TH1D((cutn1name+"RZcurv").c_str(),"",100,-0.01,0.01));
            z.CreatPlot(E55,new TH1D((cutn1name+"E55").c_str(),"",100,-1,1200));
            z.CreatPlot(F51,new TH1D((cutn1name+"F51").c_str(),"",100,0.2,1.1));
@@ -60,13 +64,16 @@ public:
            z.CreatPlot(ABCD,new TH2D((cutn1name+"ABCD").c_str(),"",100,0,1.1,100,0,30));
 	}
 
+        // The CutFlow Plots: 
+
 	CutFlow.resize(10); 
         Profile.resize(100);
 	for( int c = 0;c<nCut-1;c++){
 	   PlotSet &y = CutFlow[c];
 	   string cutflowName = "Flow_"+cutName_[c];
            y.CreatPlot(FracSatVNstrips,new TH2D((cutflowName+"FracSatVNstrips").c_str(),"",100,0,1000,100,0,1));
-           y.CreatPlot(DedXSig,new TH1D((cutflowName+"DedXSig").c_str(),"",100,0,30));
+           //y.CreatPlot(DedXSig,new TH1D((cutflowName+"DedXSig").c_str(),"",100,0,30));
+           y.CreatPlot(DedXSig,new TH1D((cutflowName+"dEdXSig").c_str(),"",100,0,30));
            y.CreatPlot(XYPar0,new TH1D((cutflowName+"XYPar0").c_str(),"",100,-1,1));
            y.CreatPlot(XYPar1,new TH1D((cutflowName+"XYPar1").c_str(),"",100,-10,10));
            y.CreatPlot(XYPar2,new TH1D((cutflowName+"XYPar2").c_str(),"",100,-20000,20000));
