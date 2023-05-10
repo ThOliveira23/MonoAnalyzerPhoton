@@ -501,7 +501,7 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
 	const unsigned NEvents = tree->GetEntries();
 
 
-	MonoCuts noTrgAnalysis("NOTRG",oFile);
+	MonoCuts noTrgAnalysis("NoTRG",oFile);
 	MonoCuts TrgAnalysis("HLT_Photon200",oFile);
         MonoCuts HLT175_TrgAnalysis("HLT_Photon175",oFile);
         //define the MonoCuts object for the new triggers
@@ -596,7 +596,7 @@ void MonoAnalyzerPhoton(string year, string mass,bool matching_option, int sys_o
         CaloMET_TrgAnalysis.WritePlots(oFile);
 
         // Extract the Signal Efficiency
-        noTrgAnalysis.SignalEff("NOTRG",NEvents);
+        noTrgAnalysis.SignalEff("NoTRG",NEvents);
         noTrgAnalysis.SaveAs_csv(("/afs/cern.ch/user/t/tmenezes/work/private/output_MonoAnalyzerPhoton/csv_file/Signaleff_"+year+"_"+mass+"_"+sys+"_"+matching+".csv").c_str(),NEvents,mass,"NoTrg");
 
         /*if(year == "2016" || year == "2016APV"){
