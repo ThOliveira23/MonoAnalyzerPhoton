@@ -26,7 +26,7 @@ public:
         x.CreatPlot(E55,new TH1F("E55","",100,0.0,1500));
         //x.CreatPlot(F51,new TH1F("F51","",100,0.2,1.1));
         x.CreatPlot(F51,new TH1F("F51","",100,0.0,1.1));
-        x.CreatPlot(HcalIso,new TH1F("HcalIso","",100,-1,10));
+        x.CreatPlot(HcalIso,new TH1F("HcalIso","",100,0,30));
         x.CreatPlot(ABCD,new TH2D("ABCD","",100,0,1.1,100,0,30));
 
 //        NoCutProfile.resize(1U);
@@ -64,7 +64,7 @@ public:
            z.CreatPlot(E55,new TH1F((cutn1name+"E55").c_str(),"",100,0.0,1500));
            //z.CreatPlot(F51,new TH1F((cutn1name+"F51").c_str(),"",100,0.2,1.1));
            z.CreatPlot(F51,new TH1F((cutn1name+"F51").c_str(),"",100,0.0,1.1));
-           z.CreatPlot(HcalIso,new TH1F((cutn1name+"HcalIso").c_str(),"",100,-1,10));
+           z.CreatPlot(HcalIso,new TH1F((cutn1name+"HcalIso").c_str(),"",100,0,30));
            z.CreatPlot(ABCD,new TH2D((cutn1name+"ABCD").c_str(),"",100,0,1.1,100,0,30));
 	}
 
@@ -88,7 +88,7 @@ public:
            y.CreatPlot(E55,new TH1F((cutflowName+"E55").c_str(),"",100,0.0,1500));
            //y.CreatPlot(F51,new TH1F((cutflowName+"F51").c_str(),"",100,0.2,1.1));
            y.CreatPlot(F51,new TH1F((cutflowName+"F51").c_str(),"",100,0.0,1.1));
-           y.CreatPlot(HcalIso,new TH1F((cutflowName+"HcalIso").c_str(),"",100,-1,10));
+           y.CreatPlot(HcalIso,new TH1F((cutflowName+"HcalIso").c_str(),"",100,0,30));
            y.CreatPlot(ABCD,new TH2D((cutflowName+"ABCD").c_str(),"",100,0,1.1,100,0,30));
 
        	   PlotSet &w = Profile[c];
